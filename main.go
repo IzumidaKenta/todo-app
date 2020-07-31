@@ -13,8 +13,9 @@ import (
     _ "github.com/jinzhu/gorm/dialects/mysql"
 )
 
-// Item representation
+// Todo representation
 type Todo struct {
+    ID      int   `json:"id"`
     Title   string `json:"title"`
     Checked bool `json:"checked"`
 }
@@ -96,20 +97,39 @@ func updateTodo(w http.ResponseWriter, r *http.Request) {
     }
 
     var todo Todo
-    var checked bool
 
     // DB接続
     db := utils.GetConnection()
     defer db.Close()
 
-    //現在のcheckedの値を読み取る
-    db.Model(&checked).Select("checked").Where("id = ?", key)
-    print(checked)
-
+    // IDで検索しに行く
+    db.Where("id = ?", key).Find(&todo)
     // Update実行
-    db.Model(&todo).Select(key).Update("checked",!checked)
+    db.Model(&todo).Update("checked", !todo.Checked)
 
     utils.RespondWithJSON(w, http.StatusOK, todo)
+}
+
+func deleteTodo(w http.ResponseWriter, r *http.Request) {
+  key, err := utils.GetID(r)
+  // If {todoid} parameter is not valid int
+  if err != nil {
+      utils.RespondWithError(w, http.StatusBadRequest, "Invalid request payload")
+      return
+  }
+
+  // DB接続
+  db := utils.GetConnection()
+  defer db.Close()
+
+
+  var todo Todo
+  // IDで検索しに行く
+  db.Where("id = ?", key).Find(&todo)
+  // Delete実行
+  db.Delete(&todo)
+
+  utils.RespondWithJSON(w, http.StatusOK, todo)
 }
 
 func handleRequests() {
@@ -119,6 +139,7 @@ func handleRequests() {
     myRouter.HandleFunc("/api/v1/todos/{id}", returnSingleTodo).Methods("GET")
     myRouter.HandleFunc("/api/v1/todos", createTodo).Methods("POST")
     myRouter.HandleFunc("/api/v1/todos/{id}", updateTodo).Methods("PUT")
+    myRouter.HandleFunc("/api/v1/todos/{id}", deleteTodo).Methods("DELETE")
     log.Fatal(http.ListenAndServe(":8080", myRouter))
 }
 

@@ -65,8 +65,6 @@ class _ListPageState extends State<ListPage> {
     final response = await http.post(url,
         body: json.encode(newItem.toJson()),
         headers: {"Content-Type": "application/json"});
-
-    print(response.statusCode);
   }
 
   //Todoのアップデートを行う処理
@@ -101,10 +99,8 @@ class _ListPageState extends State<ListPage> {
   }
   //DELETEする
   Future deleteTodo(int i) async {
-    print(i);
     final String url = 'http://localhost:8080/api/v1/todos/' + i.toString();
     await http.delete(url).then((http.Response response) {
-      print(response.statusCode);
     });
   }
 

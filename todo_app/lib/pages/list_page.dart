@@ -97,11 +97,11 @@ class _ListPageState extends State<ListPage> {
   void removeTodo(Todo todo) async {
     setState(() => todoList.remove(todo));
   }
+
   //DELETEする
   Future deleteTodo(int i) async {
     final String url = 'http://localhost:8080/api/v1/todos/' + i.toString();
-    await http.delete(url).then((http.Response response) {
-    });
+    await http.delete(url).then((http.Response response) {});
   }
 
   @override

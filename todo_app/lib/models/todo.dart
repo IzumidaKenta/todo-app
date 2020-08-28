@@ -10,13 +10,12 @@ class Todo {
   });
 
   Todo.fromJson(Map<String, dynamic> json)
-    :id = json['id'],
-     title = json['title'],
-     checked = json['checked'];
+      : id = json['id'],
+        title = json['title'],
+        checked = json['checked'];
 
   Map<String, dynamic> toJson() => {
-    'title' : title,
-    'checked': checked,
-  };
+        'title': title,
+        'checked': checked,
+      };
 }
-

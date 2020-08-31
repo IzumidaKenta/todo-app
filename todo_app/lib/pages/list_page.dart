@@ -63,7 +63,7 @@ class _ListPageState extends State<ListPage> {
 
   Future postTodo(Todo newItem) async {
     final String url = 'http://localhost:8080/api/v1/todos';
-    final response = await http.post(url,
+    await http.post(url,
         body: json.encode(newItem.toJson()),
         headers: {"Content-Type": "application/json"});
   }

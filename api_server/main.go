@@ -134,14 +134,6 @@ func deleteTodo(w http.ResponseWriter, r *http.Request) {
   //db.Raw("SELECT case when count(*) = 0 then '0' else '1' end count FROM 'todos'").Scan(&isEnpty)
 
   db.Table("todos").Count(&count)
-  fmt.Println(count)
-  db.Raw("ALTER TABLE `todos` auto_increment = 1")
-  if count == 0 {
-    fmt.Println("now")
-    db.Raw("ALTER TABLE `todos` auto_increment = 1")
-    fmt.Println("played")
-  }
-
   utils.RespondWithJSON(w, http.StatusOK, todo)
 }
 

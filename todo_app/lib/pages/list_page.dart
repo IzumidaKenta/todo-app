@@ -21,16 +21,6 @@ class _ListPageState extends State<ListPage> {
   final TextEditingController eCtrl = TextEditingController();
   List todoList;
 
-  Future getData() async {
-    await http
-        .get('http://localhost:8080/api/v1/todos')
-        .then((http.Response response) {
-      String responseBody = utf8.decode(response.bodyBytes);
-      final body = json.decode(responseBody);
-      todoList = body.map((j) => Todo.fromJson(j)).toList();
-    });
-  }
-
   @override
   void initState() {
     getData();
@@ -41,6 +31,17 @@ class _ListPageState extends State<ListPage> {
   void dispose() {
     eCtrl.dispose();
     super.dispose();
+  }
+
+  //ListにデータベースのTodoを読み込む処理
+  Future getData() async {
+    await http
+        .get('http://localhost:8080/api/v1/todos')
+        .then((http.Response response) {
+      String responseBody = utf8.decode(response.bodyBytes);
+      final body = json.decode(responseBody);
+      todoList = body.map((j) => Todo.fromJson(j)).toList();
+    });
   }
 
   //Listに新しいTodoを追加する処理
@@ -62,11 +63,9 @@ class _ListPageState extends State<ListPage> {
 
   Future postTodo(Todo newItem) async {
     final String url = 'http://localhost:8080/api/v1/todos';
-    final response = await http.post(url,
+    await http.post(url,
         body: json.encode(newItem.toJson()),
         headers: {"Content-Type": "application/json"});
-
-    print(response.statusCode);
   }
 
   //Todoのアップデートを行う処理
@@ -95,17 +94,15 @@ class _ListPageState extends State<ListPage> {
     await http.put(url).then((http.Response response) {});
   }
 
-  //タスクの削除を行う処理
+  //Todoの削除を行う処理
   void removeTodo(Todo todo) async {
     setState(() => todoList.remove(todo));
   }
+
   //DELETEする
   Future deleteTodo(int i) async {
-    print(i);
     final String url = 'http://localhost:8080/api/v1/todos/' + i.toString();
-    await http.delete(url).then((http.Response response) {
-      print(response.statusCode);
-    });
+    await http.delete(url).then((http.Response response) {});
   }
 
   @override
